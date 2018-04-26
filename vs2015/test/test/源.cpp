@@ -33,7 +33,11 @@ void print_prompt(void)
 	pass = getpwuid(getuid());
 	getcwd(cwd, sizeof(cwd));
 	setbuf(stdout, NULL);
+<<<<<<< .mine
 	printf("[%s@%s ~  %s] $ ", pass->pw_name, pass->pw_shell, cwd);
+=======
+	printf("[%s@%s~%s] $ ", "lanfeng", hostinfo.sysname, cwd);
+>>>>>>> .theirs
 }
 
 
@@ -99,9 +103,59 @@ void bf_exec(char **argv, int type)
 {
 	pid_t pid;
 	int status;
+<<<<<<< .mine
 	if ((pid = fork()) < 0) {
 		printf("创建子进程失败\n");
 		return;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=======
+	// type为0时表示非后台进程
+	if (type == 0) {
+		// 子进程
+		if ((pid = fork()) < 0) {
+			printf("*** ERROR:froking child process faild\n");
+			return;
+		}
+		else if (pid == 0) {
+			printf("子进程执行中");
+			signal(SIGTSTP, SIG_DFL);
+			execvp(argv[0], argv);
+			printf("子进程退出");
+		}
+		// 父进程阻塞等待子线程执行完毕
+		else {
+			printf("父进程执行中");
+			pid_t c;
+			signal(SIGTSTP, SIG_DFL);
+			c = wait(&status);
+			// 子进程终止，父进程把标准输入输出的指针指回原stdin_info
+			dup2(current_out, 1);
+			dup2(current_in, 0);
+			printf("父进程退出");
+			return;
+		}
+>>>>>>> .theirs
 	}
 	else if (pid == 0) {
 		//printf("\n子进程等待退出\n");
@@ -117,7 +171,11 @@ void bf_exec(char **argv, int type)
 		return;
 	}
 }
+<<<<<<< .mine
 
+=======
+
+>>>>>>> .theirs
 /*
 打印help指令
 */
@@ -183,7 +241,11 @@ void execute(char *single_command)
 		clean();
 		printf("shell程序退出中...\n");
 		toExit = 1;
+<<<<<<< .mine
 		exit(EXIT_SUCCESS);
+=======
+		exit(0);
+>>>>>>> .theirs
 	}
 
 	// 匹配非cd非exit指令
@@ -198,18 +260,37 @@ void execute(char *single_command)
 			argv[argv_count] = NULL;
 		}
 	}
+<<<<<<< .mine
 	bf_exec(argv, 0);
 	return;
 }
 
+
+
+
+=======
+
+	if (toExit == 0) {
+		bf_exec(argv, 0);
+	}
+	return;
+}
+
+>>>>>>> .theirs
 /**
 *
 */
 int main(int argc, char **argv)
 {
+<<<<<<< .mine
 	int numCount = 0;
 	int count;
 	int commands_num;
+=======
+	int numCount=0;
+	int count;
+	int commands_num;
+>>>>>>> .theirs
 	toExit = 0;
 	// 当使用重定向符时，把标准输入输出从stdin改为相对应的文件
 	// 分配内存和初始化
@@ -218,7 +299,13 @@ int main(int argc, char **argv)
 	for (; count < MAX_COMM; count++) {
 		all_command[count] = (char *)malloc(MAX_COMM);
 	}
+<<<<<<< .mine
 	while (toExit == 0) {
+
+=======
+	while (toExit==0){
+		printf("%d\n",++numCount);
+>>>>>>> .theirs
 		commands_num = 0;
 		commands = NULL;
 		for (count = 0; count < MAX_COMM; count++)
@@ -236,7 +323,11 @@ int main(int argc, char **argv)
 		parse_by_semicolon(commands);
 		// 执行故意的每条指令
 		while (all_command[commands_num] != NULL) {
+<<<<<<< .mine
 			//printf("执行次数=%d\n",++numCount);
+=======
+			
+>>>>>>> .theirs
 			execute(all_command[commands_num]);
 			commands_num++;
 		}
